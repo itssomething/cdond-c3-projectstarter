@@ -131,7 +131,8 @@ jobs:
           command: |
             cd backend
             npm install
-            npm audit fix --force
+            npm audit fix
+            npm update mkdirp --depth 2
             npm audit --audit-level=critical
       - save_cache:
           paths: [backend/node_modules]
