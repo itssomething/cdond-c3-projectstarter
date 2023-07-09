@@ -183,7 +183,7 @@ jobs:
                --output text)
             echo $BACKEND_PUBLIC_IP
             echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.ini
-            # curl --insecure https://kvdb.io/UPrHhP6vX7Au3BiwK88CdL/backendurl -d $(echo $BACKEND_PUBLIC_IP)
+            curl --insecure https://kvdb.io/UPrHhP6vX7Au3BiwK88CdL/backendurl -d $(echo $BACKEND_PUBLIC_IP)
             cat .circleci/ansible/inventory.ini
       - persist_to_workspace:
           root: ~/
