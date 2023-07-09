@@ -281,21 +281,40 @@ jobs:
 
   deploy-backend:
     docker:
-     - image: circleci/node:13.8.0
+     - image: python:3.7-alpine3.11
     steps:
-      # Checkout code from git
-      # Add ssh keys with fingerprint
-      # attach workspace
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+          - "64:b5:3b:bc:88:df:ad:06:66:98:76:8b:42:1d:3e:da:f3:38:7d:be"
+      - attach_workspace:
+          at: ./
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Install dependencies
+          working_directory: /tmp
           command: |
-            # your code here
+            apk add --update ansible curl rsync openssh nodejs npm tree
+            ansible --version
+            pip install awscli
+            aws --version
       - run:
           name: Deploy backend
+          working_directory: ./
           command: |
-            # your code here
-      # Here's where you will add some code to rollback on failure
-
+            BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+               --query 'Reservations[*].Instances[*].PublicIpAddress' \
+               --output text)
+            echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.ini
+            cat .circleci/ansible/inventory.ini
+            cd backend
+            npm install
+            npm run build
+            cd ..
+            export ANSIBLE_HOST_KEY_CHECKING=False
+            ansible-playbook -i .circleci/ansible/inventory.ini .circleci/ansible/deploy-backend.yml -vvv
   smoke-test:
     docker:
       - image: circleci/node:13.8.0
