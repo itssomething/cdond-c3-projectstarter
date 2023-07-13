@@ -429,21 +429,21 @@ jobs:
       - run:
           name: Get old stack workflow id
           command: |
-            export old_workflow_id=$(curl --insecure https://kvdb.io/UPrHhP6vX7Au3BiwK88CdL/old_workflow_id)
-            echo old_workflow_id: "${old_workflow_id}"
+            export OldWorkflowID=$(curl --insecure https://kvdb.io/UPrHhP6vX7Au3BiwK88CdL/OldWorkflowID)
+            echo OldWorkflowID: "${OldWorkflowID}"
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
-            # Fetch the stack names
-            # export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-            #           --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
-            # echo Stack names: "${STACKS[@]}"
-            current_workflow_id=${CIRCLE_WORKFLOW_ID:0:7}
-            echo CurrentWorkflowID: "${current_workflow_id}"
-            echo "old workflow ${old_workflow_id}"
-            if [[ "${STACKS[@]}" =~ "${old_workflow_id}" ]]
+
+            CurrentWorkflowID=${CIRCLE_WORKFLOW_ID:0:7}
+            echo CurrentWorkflowID: "${CurrentWorkflowID}"
+
+            if [[ "$CurrentWorkflowID" != "$OldWorkflowID" ]]
             then
-              aws s3 rm "s3://udapeople-${old_workflow_id}" --recursive
-              aws cloudformation delete-stack --stack-name "udapeople-backend-${old_workflow_id}"
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-${old_workflow_id}"
+              echo "$OldWorkflowID!=$CurrentWorkflowID => will delete old version"
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive --output text
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}" --output text
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}" --output text
+            else
+              echo "$OldWorkflowID==$CurrentWorkflowID => nothing needs to be done..."
             fi
 
 
