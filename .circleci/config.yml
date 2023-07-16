@@ -271,9 +271,8 @@ jobs:
           name: Send migration results to memstash/kvdb
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
-            cat ~/project/backend/migrations_dump.txt
             then
-              curl https://kvdb.io/UPrHhP6vX7Au3BiwK88CdL/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+              curl --insecure https://kvdb.io/UPrHhP6vX7Au3BiwK88CdL/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       - destroy-environment:
         id: ${CIRCLE_WORKFLOW_ID:0:7}
