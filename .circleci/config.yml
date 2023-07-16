@@ -130,6 +130,7 @@ jobs:
       - run:
           name: scan-frontend
           command: |
+            cd frontend
             npm audit --audit-level=critical
       - save_cache:
           paths: [frontend/node_modules]
@@ -145,6 +146,7 @@ jobs:
       - run:
           name: scan-backend
           command: |
+            cd backend
             npm audit --audit-level=critical
       - save_cache:
           paths: [backend/node_modules]
