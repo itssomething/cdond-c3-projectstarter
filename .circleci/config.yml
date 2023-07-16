@@ -387,7 +387,7 @@ jobs:
             curl "$BACKEND_URL:3030/api/status"
             if curl "$BACKEND_URL:3030/api/status" | grep "ok"
             then
-              return 0
+              return 1
             else
               return 1
             fi
