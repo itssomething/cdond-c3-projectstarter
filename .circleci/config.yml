@@ -30,6 +30,7 @@ commands:
     steps:
       - run:
           name: Revert migrations
+          working_directory: ./backend
           when: on_fail
           command: |
             SUCCESS=$(curl --insecure https://kvdb.io/UPrHhP6vX7Au3BiwK88CdL/migration_<< parameters.id >>)
