@@ -34,6 +34,7 @@ commands:
           when: on_fail
           command: |
             SUCCESS=$(curl --insecure https://kvdb.io/UPrHhP6vX7Au3BiwK88CdL/migration_<< parameters.id >>)
+            echo "Value:"
             echo $SUCCESS
             if [[ "$SUCCESS" == "1" ]]
             then
